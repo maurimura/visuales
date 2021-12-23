@@ -1,39 +1,78 @@
+import Wall from '@/components/canvas/Wall'
 import dynamic from 'next/dynamic'
-// Step 5 - delete Instructions components
-import Instructions from '@/components/dom/Instructions'
-// import Shader from '@/components/canvas/Shader/Shader'
+import { useState } from 'react'
 
-// Dynamic import is used to prevent a payload when the website start that will include threejs r3f etc..
-// WARNING ! errors might get obfuscated by using dynamic import.
-// If something goes wrong go back to a static import to show the error.
-// https://github.com/pmndrs/react-three-next/issues/49
-const Shader = dynamic(() => import('@/components/canvas/Shader/Shader'), {
-  ssr: false,
-})
+const BubbleDispenser = dynamic(
+  () => import('@/components/canvas/BubbleDispenser'),
+  {
+    ssr: false,
+  }
+)
 
-// dom components goes here
-const DOM = () => {
-  return (
-    // Step 5 - delete Instructions components
-    <Instructions />
-  )
+interface Config {
+  numberOfBubbles: number
+  velocityFactor: number
 }
 
+interface ConfigControler extends Config {
+  setNumberOfBubbles: (amount: number) => void
+  setVelocityFactor: (factor: number) => void
+}
+// dom components goes here
+const DOM: React.FC<ConfigControler> = ({
+  numberOfBubbles,
+  velocityFactor,
+  setNumberOfBubbles,
+  setVelocityFactor,
+}) => {
+  return (
+    <div>
+      <input
+        type='number'
+        value={numberOfBubbles}
+        min='0'
+        onChange={({ target: { value } }) => setNumberOfBubbles(Number(value))}
+      />
+      <input
+        type='number'
+        value={velocityFactor}
+        min='0'
+        onChange={({ target: { value } }) => setVelocityFactor(Number(value))}
+      />
+    </div>
+  )
+}
 // canvas components goes here
-const R3F = () => {
+const R3F: React.FC<Config> = ({ numberOfBubbles, velocityFactor }) => {
   return (
     <>
-      <Shader />
+      <Wall />
+      <BubbleDispenser
+        numberOfBubbles={numberOfBubbles}
+        velocityFactor={velocityFactor}
+      />
+      <textBufferGeometry />
     </>
   )
 }
 
 const Page = () => {
+  const [numberOfBubbles, setNumberOfBubbles] = useState(2)
+  const [velocityFactor, setVelocityFactor] = useState(1)
   return (
     <>
-      <DOM />
-      {/* @ts-ignore */}
-      <R3F r3f />
+      <DOM
+        numberOfBubbles={numberOfBubbles}
+        velocityFactor={velocityFactor}
+        setNumberOfBubbles={setNumberOfBubbles}
+        setVelocityFactor={setVelocityFactor}
+      />
+      <R3F
+        /* @ts-ignore */
+        r3f
+        numberOfBubbles={numberOfBubbles}
+        velocityFactor={velocityFactor}
+      />
     </>
   )
 }

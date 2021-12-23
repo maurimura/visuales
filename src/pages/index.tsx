@@ -9,6 +9,10 @@ const BubbleDispenser = dynamic(
   }
 )
 
+const Text = dynamic(() => import('@/components/canvas/Text'), {
+  ssr: false,
+})
+
 interface Config {
   numberOfBubbles: number
   velocityFactor: number
@@ -51,7 +55,7 @@ const R3F: React.FC<Config> = ({ numberOfBubbles, velocityFactor }) => {
         numberOfBubbles={numberOfBubbles}
         velocityFactor={velocityFactor}
       />
-      <textBufferGeometry />
+      <Text position={[0, 0, 0]}>Mauri</Text>
     </>
   )
 }

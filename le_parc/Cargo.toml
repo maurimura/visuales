@@ -1,0 +1,21 @@
+[package]
+name = "le_parc"
+version = "0.1.0"
+edition = "2021"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+nannou = "0.18"
+
+[[example]]
+name = "circles"
+path = "circles.rs"
+
+[[example]]
+name = "parable"
+path = "parable.rs"
+
+[[example]]
+name = "waves"
+path = "waves.rs"

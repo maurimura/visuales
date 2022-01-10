@@ -1,8 +1,11 @@
 mod config;
 
 use config::{ColorRgb, PALETTE};
-use nannou::{geom::Range, prelude::*};
+use nannou::{geom::Range, prelude::*, winit::event::DeviceEvent};
+use utils::gif_creator;
 
+const WORKSPACE: &str = "le_parc";
+const TITLE: &str = "parables";
 const POINTS: u16 = 2000;
 
 pub struct Model {
@@ -11,7 +14,7 @@ pub struct Model {
 }
 
 fn main() {
-    nannou::app(model).update(update).run();
+    nannou::app(model).event(event).update(update).run();
 }
 
 pub fn model(app: &App) -> Model {
@@ -23,13 +26,21 @@ pub fn model(app: &App) -> Model {
     }
 }
 
+pub fn event(_app: &App, _model: &mut Model, event: Event) {
+    if let Event::DeviceEvent(_device, device_event) = event {
+        match device_event {
+            DeviceEvent::Key(key) => {
+                if key.virtual_keycode == Some(Key::S) {
+                    gif_creator::create_gif(WORKSPACE, TITLE);
+                }
+            }
+            _ => {}
+        }
+    }
+}
 pub fn update(_app: &App, _model: &mut Model, _update: Update) {}
 
 pub fn view(app: &App, model: &Model, frame: Frame) {
-    // if app.elapsed_frames() > 0 {
-    //     return
-    // }
-
     let draw = app.draw();
     let boundary = app.window_rect();
     let height = boundary.top();
@@ -41,21 +52,14 @@ pub fn view(app: &App, model: &Model, frame: Frame) {
     };
     draw.background().color(BLACK);
 
-    // draw_axis(&draw, fixed_boundary);
     draw_side_parable(&draw, fixed_boundary, model);
     draw_lower_parable(&draw, fixed_boundary, model);
-    draw.to_frame(app, &frame).unwrap();
-}
 
-fn draw_axis(draw: &Draw, boundary: Rect) {
-    draw.line()
-        .start(pt2(boundary.left(), 0.0))
-        .end(pt2(boundary.right(), 0.0))
-        .color(RED);
-    draw.line()
-        .start(pt2(0.0, boundary.top()))
-        .end(pt2(0.0, boundary.bottom()))
-        .color(RED);
+    if app.elapsed_frames() < 5 {
+        gif_creator::save_frame(app, model._window, WORKSPACE, TITLE);
+    }
+
+    draw.to_frame(app, &frame).unwrap();
 }
 
 fn draw_side_parable(draw: &Draw, boundary: Rect, model: &Model) {
@@ -87,7 +91,7 @@ fn draw_side_parable(draw: &Draw, boundary: Rect, model: &Model) {
         }
 
         // Draw dots in the inner triangle
-        for _j in 0..POINTS*2 {
+        for _j in 0..POINTS * 2 {
             // First, draw random dots in a rectangle with:
             // width: upper-radius
             // height: the height of the triangle
@@ -145,7 +149,7 @@ fn draw_lower_parable(draw: &Draw, boundary: Rect, model: &Model) {
             }
         }
         // Draw dots in the inner triangle
-        for _j in 0..POINTS*2 {
+        for _j in 0..POINTS * 2 {
             // First, draw random dots in a rectangle with:
             // width: upper-radius
             // height: the height of the triangle

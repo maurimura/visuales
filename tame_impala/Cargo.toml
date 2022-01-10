@@ -1,5 +1,5 @@
 [package]
-name = "le_parc"
+name = "tame_impala"
 version = "0.1.0"
 edition = "2021"
 
@@ -9,22 +9,9 @@ edition = "2021"
 nannou = "0.18"
 utils = { path = "../utils" }
 
-
 [[example]]
 name = "circles"
 path = "circles.rs"
-
-[[example]]
-name = "parables"
-path = "parables.rs"
-
-[[example]]
-name = "waves"
-path = "waves.rs"
-
-[[example]]
-name = "squares"
-path = "squares.rs"
 
 [[example]]
 name = "test"

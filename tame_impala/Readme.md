@@ -4,7 +4,7 @@ Sketches inspired on visuals from Tame Impala live videos.
 
 ## Circles
 
-[Inspirational video](https://www.youtube.com/watch?v=YG5Dbjg-J_A)
+[Inspirational video](https://youtu.be/3cmxmca4AuM)
 
 `cargo run --release -p tame_impala --example circles`
 

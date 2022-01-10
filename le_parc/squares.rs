@@ -58,7 +58,8 @@ pub fn view(app: &App, model: &Model, frame: Frame) {
                 let amount_of_colors = PALETTE.len() as i32;
                 let color_square_index = ((x + y + color_offset) % amount_of_colors) as usize;
                 let color_dot_index =
-                    (((-x + y + color_offset - 1) % amount_of_colors) as i32).abs() as usize;
+                    (((-x + y + color_offset - 1) % -amount_of_colors) as i32).abs() as usize;
+
 
                 let color_square = PALETTE[color_square_index];
                 let color_dot = PALETTE[color_dot_index];
@@ -77,7 +78,7 @@ pub fn view(app: &App, model: &Model, frame: Frame) {
             }
         }
 
-        if (app.elapsed_frames() as f32 / ANIMATION_PERIOD) < 14.0 {
+        if (app.elapsed_frames() as f32 / ANIMATION_PERIOD) < 28.0 {
             gif_creator::save_frame(app, model._window, WORKSPACE, TITLE);
         }
 

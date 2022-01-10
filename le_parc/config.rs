@@ -1,7 +1,7 @@
 use nannou::color::{rgb8, IntoLinSrgba, Rgb};
 
 #[derive(Copy, Clone)]
-pub struct ColorRgb(u8, u8, u8);
+pub struct ColorRgb(pub u8, pub u8, pub u8);
 
 pub const PALETTE: [&'static ColorRgb; 14] = [
     &ColorRgb(255, 227, 0),

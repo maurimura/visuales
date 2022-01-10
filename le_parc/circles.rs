@@ -1,70 +1,76 @@
 mod config;
 use nannou::{prelude::*, winit::event::DeviceEvent};
 
-use config::{PALETTE, ColorRgb};
+use config::PALETTE;
+use utils::gif_creator;
 
-// use super::config::{PALETTE, ColorRgb};
+const WORKSPACE: &str = "le_parc";
+const TITLE: &str = "circles";
 pub struct Model {
     _window: window::Id,
-    palette: Vec<&'static ColorRgb>,
-    backwards: bool,
 }
 fn main() {
     nannou::app(model).event(event).update(update).run();
 }
 
 pub fn model(app: &App) -> Model {
-    let _window = app.new_window().view(view).build().unwrap();
-    let vec_palette: Vec<&ColorRgb> = PALETTE.to_vec();
-    Model {
-        _window,
-        palette: vec_palette,
-        backwards: false,
-    }
+    let _window = app.new_window().size(800, 800).view(view).build().unwrap();
+    Model { _window }
 }
 
-pub fn event(_app: &App, model: &mut Model, event: Event) {
+pub fn event(_app: &App, _model: &mut Model, event: Event) {
     if let Event::DeviceEvent(_device, device_event) = event {
         match device_event {
             DeviceEvent::Key(key) => {
-                model.backwards = key.virtual_keycode == Some(Key::Left);
+                if key.virtual_keycode == Some(Key::S) {
+                    gif_creator::create_gif(WORKSPACE, TITLE);
+                }
             }
             _ => {}
         }
     }
 }
 
-pub fn update(app: &App, model: &mut Model, _update: Update) {
-    if app.elapsed_frames() % 6 == 0 {
-        let mut colors = model.palette.clone();
-
-        if !model.backwards {
-            let mut new_colors = colors.split_off(1);
-            new_colors.push(colors[0]);
-            model.palette = new_colors;
-        } else {
-            if let Some(new_first_color) = colors.pop() {
-                let mut new_colors = vec![new_first_color];
-                new_colors.extend_from_slice(&colors[0..]);
-                model.palette = new_colors;
-            }
-        }
-    }
-}
+pub fn update(_app: &App, _model: &mut Model, _update: Update) {}
 
 pub fn view(app: &App, model: &Model, frame: Frame) {
-    let draw = app.draw();
-    let boundary = app.window_rect();
-    draw.background().color(BLACK);
-    let amount_of_colors = model.palette.len();
-    let radius = boundary.top() / amount_of_colors as f32;
+    let frame_delay = 6;
+    if app.elapsed_frames() % frame_delay == 0 {
+        let draw = app.draw();
+        let boundary = app.window_rect();
+        draw.background().color(BLACK);
+        let amount_of_colors = PALETTE.len();
+        let max_radius = boundary.top().min(boundary.right()) + 1.0;
+        let stroke_weight = max_radius / amount_of_colors as f32;
+        let points = (0..=360).map(|i| {
+            let radian = deg_to_rad(i as f32);
+            let x = radian.cos();
+            let y = radian.sin();
+            pt2(x, y)
+        });
 
-    for index in 0..amount_of_colors {
-        let current_radius = (amount_of_colors - index) as f32 * radius;
-        draw.ellipse()
-            .w_h(current_radius, current_radius)
-            .color(model.palette[index]);
+        for index in 0..amount_of_colors {
+            let amount_of_colors = amount_of_colors as u64;
+            let radius = map_range(index as f32, 0.0, 15.0, 10.0, max_radius);
+            let span = app.elapsed_frames() / frame_delay;
+            let color_index = (index as u64 - 16 - span) % amount_of_colors as u64;
+
+            let colored_points = points.clone().map(|point| {
+                (
+                    pt2(point.x * radius, point.y * radius),
+                    PALETTE[color_index as usize],
+                )
+            });
+
+            draw.polyline()
+                .weight(stroke_weight)
+                .points_colored(colored_points);
+        }
+
+        if app.elapsed_frames() / frame_delay < 14 {
+            gif_creator::save_frame(app, model._window, WORKSPACE, TITLE);
+        }
+
+        draw.to_frame(app, &frame).unwrap();
     }
-
-    draw.to_frame(app, &frame).unwrap();
 }

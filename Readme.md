@@ -8,7 +8,7 @@ They're build with [Rust](https://www.rust-lang.org/learn/get-started) 🦀 usin
 
 ## Examples
 
-You need to have Rust installed in your sistem. After that, you can clone the repo and use `cargo` to run the examples.
+You need to have Rust installed in your system. After that, you can clone this repo and use `cargo` to run the examples.
 
 Usage:
 
@@ -25,7 +25,7 @@ or
 ### [Julio Le Parc inspired](./le_parc/Readme.md)
 
 |                                          |                                            |                                          |                                      |
-| ---------------------------------------- | :----------------------------------------: | :--------------------------------------: | -----------------------------------: |
+| :--------------------------------------: | :----------------------------------------: | :--------------------------------------: | :----------------------------------: |
 | ![Circles](./le_parc/images/circles.gif) | ![Parables](./le_parc/images/parables.gif) | ![Squares](./le_parc/images/squares.gif) | ![Waves](./le_parc/images/waves.gif) |
 | [source](./le_parc/circles.rs)           | [source](./le_parc/parables.rs)            | [source](./le_parc/squares.rs)           | [source](./le_parc/waves.rs)         |
 
